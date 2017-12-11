@@ -17,6 +17,7 @@ import {
 } from 'react-native';
 
 import Mailer from 'react-native-mail';
+import store from 'react-native-simple-store';
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' +
@@ -35,7 +36,7 @@ export default class HomeScreen extends Component<{}> {
     super(props);
     this.state = { 
       name: '',
-      descripion: '',
+      description: '',
       year: '',
       category: '',
     };
@@ -54,9 +55,9 @@ export default class HomeScreen extends Component<{}> {
       />
       <TextInput
         style={styles.input}
-        placeholder="Descripion"
-        value={this.state.descripion}
-        onChangeText={(descripion) => this.setState({descripion})}
+        placeholder="Description"
+        value={this.state.description}
+        onChangeText={(description) => this.setState({description})}
       />
       <TextInput
         style={styles.input}
@@ -74,14 +75,14 @@ export default class HomeScreen extends Component<{}> {
       style = {{padding : 10 }}
       />
       <Button
-        onPress={() => this.saveData(this.state.name,this.state.year,this.state.descripion,this.state.category)}
+        onPress={() => this.saveData(this.state.name,this.state.year,this.state.description,this.state.category)}
         title="Save Car"
       />
        <Text
       style = {{padding : 10 }}
       />
       <Button
-        onPress={() =>this.sendEmail(this.state.name,this.state.year,this.state.descripion,this.state.category)}
+        onPress={() =>this.sendEmail(this.state.name,this.state.year,this.state.description,this.state.category)}
         title="Send Email"
         />
       <Text
@@ -91,23 +92,53 @@ export default class HomeScreen extends Component<{}> {
         onPress={() => navigate("ListScreen")}
         title="Show all Cars"
         />
+         {/* <Text
+      style = {{padding : 10 }}
+      />
+      <Button
+        //onPress={() => navigate("ListScreen")}
+        onPress={()=> this.showall()}
+        title="Show Cars"
+        /> */}
       </View>
   );
 }
 
-  saveData(name,year,descripion,category){
-    if(name === '' || year === '' || descripion ==="" || category ===""){
+  saveData(name,year,description,category){
+    if(name === '' || year === '' || description ==="" || category ===""){
       Alert.alert(
         "All rows are required!"
       )
     }else{
-    
+        const car = {
+            name:name,
+            year:year,
+            description:description,
+            category:category
+        };
+        //store.delete('cars')
+        store.push('cars',car);
+        Alert.alert(
+          "Car Saved!"
+        )
+        this.setState({
+          name: '',
+          description: '',
+          year: '',
+          category: ''
+        })
     }
 
   }
 
-  sendEmail(name,year,descripion,category){
-    if(name === '' || year === '' || descripion ===""  || category ===""){
+  showall(){
+      store.get('cars').then((res)=> 
+        Alert.alert("",JSON.stringify(res))
+    );
+
+  }
+  sendEmail(name,year,description,category){
+    if(name === '' || year === '' || description ===""  || category ===""){
       Alert.alert(
         "All rows are required!"
       )
@@ -115,7 +146,7 @@ export default class HomeScreen extends Component<{}> {
         Mailer.mail({
         subject: 'Selected car',
         recipients: ['support@example.com'],
-        body: '<b>'+name+"</b><p> Year: "+year+"</p><p> Description: "+descripion+"</p><p> Category:"+ category+'</p>',
+        body: '<b>'+name+"</b><p> Year: "+year+"</p><p> Description: "+description+"</p><p> Category:"+ category+'</p>',
         isHTML: true,
         attachment: {
           path: '',  // The absolute path of the file from which to read data.
@@ -142,20 +173,8 @@ export default class HomeScreen extends Component<{}> {
 
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
+  input: {
     fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
+    height: 80, 
+  }
 });

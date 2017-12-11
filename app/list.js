@@ -4,33 +4,55 @@ import {
   StyleSheet,
   Text,
   View,
-  Button
+  Button,
+  FlatList,
+  Alert
 } from 'react-native';
+
+import store from 'react-native-simple-store';
 
 export default class ListScreen extends Component<{}> {
   static navigationOptions = {
     title: 'Car List',
   };
 
-  render() {
-    const { navigate } = this.props.navigation
-    return (
-      <View style={styles.container}>
-        <Text>This is List screen :D :D</Text>
-        <Button
-        onPress={() => navigate("EditScreen")}
-        title="Edit"
-        />
-      </View>
+  constructor(){
+    super();
+    this.state={
+      list: ''
+    }
+    
+    store.get('cars').then((res)=>
+    this.setState({
+        list:res
+    })
     );
-  }
+}
+
+render(){
+   const { navigate } = this.props.navigation
+  return(
+    <View style={{alignItems: 'center'}}>
+      <FlatList
+        data = {this.state.list}
+        renderItem={({item}) => 
+          <Text style = {styles.input} numberOfLines={5} onPress={() => navigate("EditScreen")} >
+            Car Name: {item.name+'\n'}
+            Year: {item.year+'\n'}
+            Description: {item.description+'\n'}
+            Category: {item.category} 
+            </Text>
+        }
+       keyExtractor={(item, key) => key}  
+      />
+    </View>
+  )
+}
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
+  input: {
+    fontSize: 20,
+    height: 130
+  }
 });
