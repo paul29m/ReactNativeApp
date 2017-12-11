@@ -147,21 +147,10 @@ export default class HomeScreen extends Component<{}> {
         subject: 'Selected car',
         recipients: ['support@example.com'],
         body: '<b>'+name+"</b><p> Year: "+year+"</p><p> Description: "+description+"</p><p> Category:"+ category+'</p>',
-        isHTML: true,
-        attachment: {
-          path: '',  // The absolute path of the file from which to read data.
-          type: '',   // Mime Type: jpg, png, doc, ppt, html, pdf
-          name: '',   // Optional: Custom filename for attachment
-        }
+        isHTML: true
       }, (error, event) => {
         Alert.alert(
-          error,
-          event,
-          [
-            {text: 'Ok', onPress: () => console.log('OK: Email Error Response')},
-            {text: 'Cancel', onPress: () => console.log('CANCEL: Email Error Response')}
-          ],
-          { cancelable: true }
+         'Something went wrong...'
         )
       });
       
