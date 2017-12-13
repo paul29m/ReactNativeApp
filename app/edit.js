@@ -10,31 +10,52 @@ import {
 } from 'react-native';
 
 import store from 'react-native-simple-store';
+import Store from 'react-native-store';
+
 
 export default class EditScreen extends Component<{}> {
   static navigationOptions = {
     title: 'Edit Car',
   };
+
+  DB = {
+    'carDb' : Store.model('carsDb')
+  }
   constructor(props) {
-    //const {initialName} =props.navigation.state.params.user;
     super(props);
     this.state = { 
-      name: 'Mercedes',
+      id: this.props.navigation.state.params.name,
+      name: '',
       description: '',
       year: '',
       category: '',
     };
-    //this.setState({name: initialName})
+   
   }
 
+  componentDidMount() {
+    this.DB.carDb.find({
+      where:{
+       _id: this.state.id
+      }
+    }).then(resp =>  
+      this.setState({
+      name: resp[0].name,
+      description: resp[0].description,
+      year: resp[0].year,
+      category: resp[0].category
+    })
+    );
+    
+  }
+  
   render() {
-    //const {initialName} = this.props.navigation.state.params.user;
    
     return (
       <View >
         <TextInput
         style={styles.input}
-        //placeholder="Name"
+        placeholder="Name"
         value={this.state.name}
         onChangeText={(name) => this.setState({name})}
       />
@@ -60,13 +81,13 @@ export default class EditScreen extends Component<{}> {
       style = {{padding : 10 }}
       />
       <Button
-        onPress={() => this.updateData(this.state.name,this.state.year,this.state.description,this.state.category)}
-        title="Save Car"
+        onPress={() => this.updateData(this.state.id,this.state.name,this.state.year,this.state.description,this.state.category)}
+        title="Update Car"
       />
       </View>
     );
   }
-  updateData(name,year,description,category){
+  updateData(id,name,year,description,category){
     if(name === '' || year === '' || description ==="" || category ===""){
       Alert.alert(
         "All rows are required!"
@@ -79,9 +100,17 @@ export default class EditScreen extends Component<{}> {
             category:category
         };
         //store.delete('cars')
-        store.push('cars',car);
+        //store.push('cars',car);
+        
+        const { navigate } = this.props.navigation
+        this.DB.carDb.updateById(car,id)
         Alert.alert(
-          "Car updated!"
+          "Car updated!",
+          "",
+          [
+          // {text: 'Cancel', style: 'cancel'},
+          {text: 'OK', onPress: () => navigate("ListScreen")}
+          ]
         )
         this.setState({
           name: '',
@@ -90,8 +119,6 @@ export default class EditScreen extends Component<{}> {
           category: ''
         })
 
-        const { navigate } = this.props.navigation
-        navigate("ListScreen")
     }
   }
 }

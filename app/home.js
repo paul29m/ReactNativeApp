@@ -18,6 +18,7 @@ import {
 
 import Mailer from 'react-native-mail';
 import store from 'react-native-simple-store';
+import Store from 'react-native-store';
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' +
@@ -31,7 +32,9 @@ export default class HomeScreen extends Component<{}> {
         title: 'Home Screen',
       };
     
-
+  DB = {
+        'carDb' : Store.model('carsDb')
+      }
   constructor(props) {
     super(props);
     this.state = { 
@@ -40,8 +43,14 @@ export default class HomeScreen extends Component<{}> {
       year: '',
       category: '',
     };
+    
   }
   
+
+  componentDidMount() {
+    
+  }
+
   render() {
     const { navigate } = this.props.navigation
     
@@ -117,7 +126,8 @@ export default class HomeScreen extends Component<{}> {
             category:category
         };
         //store.delete('cars')
-        store.push('cars',car);
+        //store.push('cars',car);
+        this.DB.carDb.add(car);
         Alert.alert(
           "Car Saved!"
         )
@@ -132,9 +142,10 @@ export default class HomeScreen extends Component<{}> {
   }
 
   showall(){
-      store.get('cars').then((res)=> 
-        Alert.alert("",JSON.stringify(res))
-    );
+      // store.get('cars').then((res)=> 
+      //   Alert.alert("",JSON.stringify(res))
+    //);
+    this.DB.carDb.find().then(resp =>  Alert.alert("",JSON.stringify(resp)))
 
   }
   sendEmail(name,year,description,category){

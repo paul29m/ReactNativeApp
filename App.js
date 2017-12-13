@@ -18,9 +18,12 @@ import ListScreen from './app/list'
 import EditScreen from './app/edit'
 
 const Screens = StackNavigator({
-  HomeScreen: {screen: HomeScreen},
+  HomeScreen: {screen: HomeScreen },
   ListScreen: {screen: ListScreen},
   EditScreen: {screen: EditScreen}
-});
+},{
+  initialRouteName: 'HomeScreen',
+}
+);
 
 export default Screens;
